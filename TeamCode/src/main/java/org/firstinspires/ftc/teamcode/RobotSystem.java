@@ -16,7 +16,8 @@ public class RobotSystem {
     public final LinearOpMode opMode;
     public RobotSystem(HardwareMap hardwareMap, LinearOpMode opMode) {
         this.hardwareRobot = new HardwareRobot(hardwareMap);
-        this.cv = new CVSubsystem(hardwareRobot.cameraName, opMode, new MotifPipeline());
+        this.cv = new CVSubsystem(hardwareRobot.cameraName, opMode, hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
         this.drive = new DriveSubsystem(
           hardwareRobot.leftFront,
           hardwareRobot.rightFront,

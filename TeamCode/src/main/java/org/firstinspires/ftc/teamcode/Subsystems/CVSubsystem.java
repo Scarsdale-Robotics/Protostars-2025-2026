@@ -10,21 +10,35 @@ import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.concurrent.TimeUnit;
 
 public class CVSubsystem {
     public MotifPipeline pipeline;
+    public VisionPortal vp;
+    public AprilTagProcessor aprilTagProcessor;
     private final Size CAMERA_RESOLUTION = new Size(640, 480);
-    public CVSubsystem (WebcamName cameraName, LinearOpMode opMode, MotifPipeline p) {
-        VisionPortal vp = new VisionPortal.Builder()
+    public CVSubsystem (WebcamName cameraName, LinearOpMode opMode, int viewcontainerid) {
+        this.aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .setDrawCubeProjection(true)
+                .build();
+        this.vp = new VisionPortal.Builder()
                 .setCamera(cameraName)
                 .enableLiveView(true)
                 .setCameraResolution(CAMERA_RESOLUTION)
                 .addProcessor(pipeline)
+                .addProcessor(aprilTagProcessor)
+                .setAutoStartStreamOnBuild(true)
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setLiveViewContainerId(viewcontainerid)
                 .build();
         vp.setProcessorEnabled(pipeline, true);
+        vp.setProcessorEnabled(aprilTagProcessor, true);
         while ((opMode.opModeInInit() || opMode.opModeIsActive()) && vp.getCameraState() != VisionPortal.CameraState.STREAMING);
 
         updateExposure(vp);
@@ -33,5 +47,8 @@ public class CVSubsystem {
         ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
         exposureControl.setMode(ExposureControl.Mode.Manual);
         exposureControl.setExposure(15, TimeUnit.MILLISECONDS);  // exposure may have to be adjusted during competitions
+    }
+    public String Motif() {
+        return pipeline.motif();
     }
 }
