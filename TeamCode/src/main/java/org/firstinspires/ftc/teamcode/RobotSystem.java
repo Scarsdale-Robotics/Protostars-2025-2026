@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.CV.MotifPipeline;
 import org.firstinspires.ftc.teamcode.Subsystems.CVSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DriveSubsystem;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.Optional;
 
@@ -25,5 +26,17 @@ public class RobotSystem {
           hardwareRobot.leftFront
         );
         this.opMode = opMode;
+    }
+    public String decode(AprilTagDetection target) {
+        if (target.id == 21) {
+            return "GPP";
+        }
+        else if (target.id == 22) {
+            return "PGP";
+        }
+        else if (target.id == 23) {
+            return "PPG";
+        }
+        return "No Tag Found";
     }
 }

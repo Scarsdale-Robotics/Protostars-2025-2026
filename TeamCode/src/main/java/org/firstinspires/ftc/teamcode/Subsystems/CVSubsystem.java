@@ -4,8 +4,11 @@ import android.graphics.Camera;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.teamcode.CV.ColorDetection;
 import org.firstinspires.ftc.teamcode.CV.MotifPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
+
+import android.graphics.Color;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,12 +16,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class CVSubsystem {
     public MotifPipeline pipeline;
     public VisionPortal vp;
     public AprilTagProcessor aprilTagProcessor;
+    public ColorDetection colorDetection;
     private final Size CAMERA_RESOLUTION = new Size(640, 480);
     public CVSubsystem (WebcamName cameraName, LinearOpMode opMode, int viewcontainerid) {
         this.aprilTagProcessor = new AprilTagProcessor.Builder()
@@ -50,5 +55,8 @@ public class CVSubsystem {
     }
     public String Motif() {
         return pipeline.motif();
+    }
+    public List<Integer> getPixels() {
+        return colorDetection.colors();
     }
 }

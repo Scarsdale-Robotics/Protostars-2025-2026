@@ -31,7 +31,7 @@ public class SimpleAuto extends LinearOpMode {
             sleep(200);
             driveToTag(lastTagDetected, 100, 100);
             //rely on odometry here - three sequences based off of motif
-            String sequence = robot.cv.Motif();
+            String sequence = robot.decode(lastTagDetected);
             switch (sequence) {
                 case "GPP":
                     break;
@@ -40,6 +40,7 @@ public class SimpleAuto extends LinearOpMode {
                 case "PPG":
                     break;
             }
+            //do something involving color detection and odometry above
         }
     }
 
@@ -69,13 +70,13 @@ public class SimpleAuto extends LinearOpMode {
 
     public void turn(int degrees) {
         PIDController controller = new PIDController(0.02, 0, 0.001);  // tune these
-        controller.setTolerance(1);  // within 1 degree is "good enough"
+        controller.setTolerance(1);
 
         double targetAngle = getHeading() + degrees;
 
         while (opModeIsActive() && !controller.atSetPoint()) {
             double power = controller.calculate(getHeading(), targetAngle);
-            robot.drive.driveRobotCentricPowers(0, 0, power); // use PID output!
+            robot.drive.driveRobotCentricPowers(0, 0, power);
             telemetry.addData("Heading", getHeading());
             telemetry.addData("Power", power);
             telemetry.update();
