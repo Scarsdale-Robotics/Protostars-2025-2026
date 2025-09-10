@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class HardwareRobot {
 
@@ -15,6 +17,7 @@ public class HardwareRobot {
     public final Motor leftBack;
     public final Motor rightBack;
     public final WebcamName cameraName;
+    public final IMU imu;
 
     public HardwareRobot(HardwareMap hardwareMap) {
         leftFront = new Motor(hardwareMap, "leftFront", Motor.GoBILDA.RPM_312);
@@ -51,8 +54,24 @@ public class HardwareRobot {
         rightFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
+        imu = hardwareMap.get(IMU.class, "imu");
         cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
     }
+    public void setImu() {
+        RevHubOrientationOnRobot orientationOnRobot =
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                );
 
+        // Create parameters with orientation + angle unit
+        IMU.Parameters parameters = new IMU.Parameters(orientationOnRobot);
+
+        imu.initialize(parameters);
+        imu.resetYaw();
+    }
+    public double getHeading() {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
+    }
 }

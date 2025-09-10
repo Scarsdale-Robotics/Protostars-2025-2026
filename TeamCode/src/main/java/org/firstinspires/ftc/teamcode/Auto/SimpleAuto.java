@@ -14,18 +14,11 @@ import java.util.ArrayList;
 public class SimpleAuto extends LinearOpMode {
     public RobotSystem robot;
     public AprilTagDetection lastTagDetected;
-    public IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        imu = hardwareMap.get(IMU.class, "imu");
-
-        // Reset yaw so heading = 0 at start
-        imu.resetYaw();
-
         this.robot = new RobotSystem(hardwareMap, this);
         waitForStart();
-
         while (opModeIsActive()) {
             turn(30);   // turn left 30 degrees
             sleep(200);
@@ -72,24 +65,29 @@ public class SimpleAuto extends LinearOpMode {
         PIDController controller = new PIDController(0.02, 0, 0.001);  // tune these
         controller.setTolerance(1);
 
-        double targetAngle = getHeading() + degrees;
+        double targetAngle = robot.hardwareRobot.getHeading() + degrees;
 
         while (opModeIsActive() && !controller.atSetPoint()) {
-            double power = controller.calculate(getHeading(), targetAngle);
+            double power = controller.calculate(robot.hardwareRobot.getHeading(), targetAngle);
             robot.drive.driveRobotCentricPowers(0, 0, power);
-            telemetry.addData("Heading", getHeading());
+            telemetry.addData("Heading", robot.hardwareRobot.getHeading());
             telemetry.addData("Power", power);
             telemetry.update();
         }
         robot.drive.driveRobotCentricPowers(0, 0, 0);
     }
 
-    public double getHeading() {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        return orientation.getYaw(AngleUnit.DEGREES);
-    }
 
     public boolean xInchRadius(int radius, AprilTagDetection target) {
         return target != null && target.ftcPose.range <= radius;
+    }
+    public void sequenceOne() {
+
+    }
+    public void sequenceTwo() {
+
+    }
+    public void sequenceThree() {
+
     }
 }
