@@ -18,8 +18,10 @@ public class SimpleAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         this.robot = new RobotSystem(hardwareMap, this);
+        robot.hardwareRobot.setImu();
         waitForStart();
         while (opModeIsActive()) {
+            detectTags();
             turn(30);   // turn left 30 degrees
             sleep(200);
             driveToTag(lastTagDetected, 100, 100);
@@ -33,7 +35,10 @@ public class SimpleAuto extends LinearOpMode {
                 case "PPG":
                     break;
             }
-            //do something involving color detection and odometry above
+            turn(90);
+            odomDrive(1000);
+            turn(90);
+            sequence(sequence);
         }
     }
 
@@ -58,9 +63,23 @@ public class SimpleAuto extends LinearOpMode {
     }
     //TODO: tweak coordinates for actual placement in front of apriltag
     public void driveToTag(AprilTagDetection target, int xCoordinate, int yCoordinate) {
-
+        PIDController tagController = new PIDController(0.02,0,0.001);
+        while (opModeIsActive() && !tagController.atSetPoint()) {
+            double powerX = tagController.calculate(target.robotPose.getPosition().x, xCoordinate);
+            double powerY = tagController.calculate(target.robotPose.getPosition().y, yCoordinate);
+            robot.drive.driveRobotCentricPowers(powerX, powerY, 0);
+        }
     }
-
+    //ticks
+    public void odomDrive(double distance) {
+        PIDController controllerOdom = new PIDController(0.02,0,0.001);
+        controllerOdom.setTolerance(1);
+        double targ = robot.drive.getLeftBackPosition() + distance;
+        while (opModeIsActive() && !controllerOdom.atSetPoint()) {
+            double power = controllerOdom.calculate(robot.drive.getLeftBackPosition(), targ);
+            robot.drive.driveRobotCentricPowers(0, power, 0);
+        }
+    }
     public void turn(int degrees) {
         PIDController controller = new PIDController(0.02, 0, 0.001);  // tune these
         controller.setTolerance(1);
@@ -74,20 +93,24 @@ public class SimpleAuto extends LinearOpMode {
             telemetry.addData("Power", power);
             telemetry.update();
         }
-        robot.drive.driveRobotCentricPowers(0, 0, 0);
     }
 
 
     public boolean xInchRadius(int radius, AprilTagDetection target) {
         return target != null && target.ftcPose.range <= radius;
     }
-    public void sequenceOne() {
-
-    }
-    public void sequenceTwo() {
-
-    }
-    public void sequenceThree() {
-
+    public void sequence(String motif) {
+        if (motif.equals("GPP")) {
+            odomDrive(1000);
+        }
+        else if (motif.equals("PGP")) {
+            odomDrive(2000);
+        } else {
+            odomDrive(3000);
+        }
+        for (int i = 0; i < 3; i++) {
+            odomDrive(100);
+            //intake
+        }
     }
 }
