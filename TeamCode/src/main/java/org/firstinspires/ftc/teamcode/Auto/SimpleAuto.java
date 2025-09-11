@@ -22,19 +22,9 @@ public class SimpleAuto extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             detectTags();
-            turn(30);   // turn left 30 degrees
-            sleep(200);
             driveToTag(lastTagDetected, 100, 100);
             //rely on odometry here - three sequences based off of motif
             String sequence = robot.decode(lastTagDetected);
-            switch (sequence) {
-                case "GPP":
-                    break;
-                case "PGP":
-                    break;
-                case "PPG":
-                    break;
-            }
             turn(90);
             odomDrive(1000);
             turn(90);
@@ -64,6 +54,7 @@ public class SimpleAuto extends LinearOpMode {
     //TODO: tweak coordinates for actual placement in front of apriltag
     public void driveToTag(AprilTagDetection target, int xCoordinate, int yCoordinate) {
         PIDController tagController = new PIDController(0.02,0,0.001);
+        tagController.setTolerance(1);
         while (opModeIsActive() && !tagController.atSetPoint()) {
             double powerX = tagController.calculate(target.robotPose.getPosition().x, xCoordinate);
             double powerY = tagController.calculate(target.robotPose.getPosition().y, yCoordinate);
