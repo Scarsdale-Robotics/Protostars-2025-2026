@@ -39,5 +39,6 @@ public final class DriveConstants {
      *  Max angular acceleration of the robot in rad/s^2.
      */
     public static double MAX_ANGULAR_ACCELERATION = 4; //TODO: TUNE
+    public double IN_PER_TICK = 0.02208;
 
 }

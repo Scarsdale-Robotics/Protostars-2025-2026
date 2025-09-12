@@ -14,13 +14,14 @@ import java.util.ArrayList;
 public class SimpleAuto extends LinearOpMode {
     public RobotSystem robot;
     public AprilTagDetection lastTagDetected;
+    public int iterations = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
         this.robot = new RobotSystem(hardwareMap, this);
         robot.hardwareRobot.setImu();
         waitForStart();
-        while (opModeIsActive()) {
+        while (opModeIsActive() && iterations < 2) {
             detectTags();
             driveToTag(lastTagDetected, 100, 100);
             //rely on odometry here - three sequences based off of motif
@@ -29,6 +30,9 @@ public class SimpleAuto extends LinearOpMode {
             odomDrive(1000);
             turn(90);
             sequence(sequence);
+            //outtake
+
+            iterations++;
         }
     }
 
@@ -103,5 +107,16 @@ public class SimpleAuto extends LinearOpMode {
             odomDrive(100);
             //intake
         }
+        turn(-90);
+        if (motif.equals("GPP")) {
+            odomDrive(1000);
+        }
+        else if (motif.equals("PGP")) {
+            odomDrive(2000);
+        } else {
+            odomDrive(4000);
+        }
+        turn(70);
+        //shoot
     }
 }
