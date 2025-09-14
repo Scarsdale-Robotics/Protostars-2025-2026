@@ -43,6 +43,7 @@ public class CVSubsystem {
                 .setLiveViewContainerId(viewcontainerid)
                 .build();
         vp.setProcessorEnabled(pipeline, true);
+        vp.setProcessorEnabled(colorDetection, true);
         vp.setProcessorEnabled(aprilTagProcessor, true);
         while ((opMode.opModeInInit() || opMode.opModeIsActive()) && vp.getCameraState() != VisionPortal.CameraState.STREAMING);
 

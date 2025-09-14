@@ -22,16 +22,17 @@ public class SimpleAuto extends LinearOpMode {
         robot.hardwareRobot.setImu();
         waitForStart();
         while (opModeIsActive() && iterations < 2) {
-            detectTags();
             driveToTag(lastTagDetected, 100, 100);
             //rely on odometry here - three sequences based off of motif
             String sequence = robot.decode(lastTagDetected);
-            turn(90);
+            turn(30);
+            //outtake
+            turn(60);
             odomDrive(1000);
             turn(90);
             sequence(sequence);
+            driveToTag(lastTagDetected, 300, 100);
             //outtake
-
             iterations++;
         }
     }
@@ -57,6 +58,7 @@ public class SimpleAuto extends LinearOpMode {
     }
     //TODO: tweak coordinates for actual placement in front of apriltag
     public void driveToTag(AprilTagDetection target, int xCoordinate, int yCoordinate) {
+        detectTags();
         PIDController tagController = new PIDController(0.02,0,0.001);
         tagController.setTolerance(1);
         while (opModeIsActive() && !tagController.atSetPoint()) {
@@ -67,6 +69,7 @@ public class SimpleAuto extends LinearOpMode {
     }
     //ticks
     public void odomDrive(double distance) {
+        detectTags();
         PIDController controllerOdom = new PIDController(0.02,0,0.001);
         controllerOdom.setTolerance(1);
         double targ = robot.drive.getLeftBackPosition() + distance;
@@ -76,6 +79,7 @@ public class SimpleAuto extends LinearOpMode {
         }
     }
     public void turn(int degrees) {
+        detectTags();
         PIDController controller = new PIDController(0.02, 0, 0.001);  // tune these
         controller.setTolerance(1);
 
@@ -108,15 +112,5 @@ public class SimpleAuto extends LinearOpMode {
             //intake
         }
         turn(-90);
-        if (motif.equals("GPP")) {
-            odomDrive(1000);
-        }
-        else if (motif.equals("PGP")) {
-            odomDrive(2000);
-        } else {
-            odomDrive(4000);
-        }
-        turn(70);
-        //shoot
     }
 }
