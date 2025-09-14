@@ -37,6 +37,7 @@ public class ColorDetection implements VisionProcessor {
     // BLUE
     Scalar lowerBlue = new Scalar(100, 150, 50);
     Scalar upperBlue = new Scalar(140, 255, 255);
+
     @Override
     public Mat processFrame(Mat img, long processTimeNanoSeconds) {
         Mat hsv = new Mat();

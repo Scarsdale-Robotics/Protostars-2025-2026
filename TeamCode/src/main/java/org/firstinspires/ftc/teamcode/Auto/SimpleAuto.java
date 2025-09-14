@@ -15,6 +15,7 @@ public class SimpleAuto extends LinearOpMode {
     public RobotSystem robot;
     public AprilTagDetection lastTagDetected;
     public int iterations = 0;
+    public int motifID;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,12 +50,16 @@ public class SimpleAuto extends LinearOpMode {
                 telemetry.addData("Yaw", tag.ftcPose.yaw);
                 telemetry.addData("Range: ", tag.ftcPose.range);
                 lastTagDetected = tag;
-                break;
+                //hopefully my edit wont make the robot explode
+                motifID = tag.id;
             }
         } else {
             lastTagDetected = null; // clear old tag when none detected
         }
     }
+
+
+
     //TODO: tweak coordinates for actual placement in front of apriltag
     public void driveToTag(AprilTagDetection target, int xCoordinate, int yCoordinate) {
         PIDController tagController = new PIDController(0.02,0,0.001);
@@ -95,12 +100,18 @@ public class SimpleAuto extends LinearOpMode {
         return target != null && target.ftcPose.range <= radius;
     }
     public void sequence(String motif) {
-        if (motif.equals("GPP")) {
+
+
+        // FIX THIS SO IT DOESN'T RUN THE FUNCTION LIKE 20 TIMES
+
+
+
+        if (motifID == 21) {
             odomDrive(1000);
         }
-        else if (motif.equals("PGP")) {
+        else if (motifID == 22) {
             odomDrive(2000);
-        } else {
+        } else if (motifID == 23){
             odomDrive(3000);
         }
         for (int i = 0; i < 3; i++) {
@@ -108,12 +119,13 @@ public class SimpleAuto extends LinearOpMode {
             //intake
         }
         turn(-90);
-        if (motif.equals("GPP")) {
+
+        if (motifID == 21) {
             odomDrive(1000);
         }
-        else if (motif.equals("PGP")) {
+        else if (motifID == 22) {
             odomDrive(2000);
-        } else {
+        } else if (motifID == 23){
             odomDrive(4000);
         }
         turn(70);
