@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.robot.Robot;
 
+import org.firstinspires.ftc.teamcode.Auto.SimpleAuto;
 import org.firstinspires.ftc.teamcode.RobotSystem;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -13,16 +14,23 @@ public class TeleOpOutline extends LinearOpMode {
     public double speed;
     public RobotSystem robot;
     public AprilTagDetection lastTagDetected;
+    public String motif;
     @Override
     public void runOpMode() throws InterruptedException {
         this.robot = new RobotSystem(hardwareMap, this);
         robot.hardwareRobot.setImu();
+        motif = SimpleAuto.motif;
         this.speed = 0.5;
         waitForStart();
         while (opModeIsActive()) {
             double strafe = gamepad1.left_stick_x;
             double forward = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
+            if (xInchRadius(lastTagDetected, 10)) {
+                speed = 0.3;
+            } else {
+                speed = 0.5;
+            }
             robot.drive.driveRobotCentricPowers(strafe * speed, forward * speed, turn * speed);
             detectTags();
         }
@@ -45,5 +53,8 @@ public class TeleOpOutline extends LinearOpMode {
         } else {
             lastTagDetected = null; // clear old tag when none detected
         }
+    }
+    public boolean xInchRadius(AprilTagDetection target, int radius) {
+        return target.ftcPose.range <= radius;
     }
 }

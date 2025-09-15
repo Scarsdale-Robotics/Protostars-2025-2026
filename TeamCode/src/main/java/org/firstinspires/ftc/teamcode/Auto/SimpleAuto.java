@@ -12,9 +12,11 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.ArrayList;
 
 public class SimpleAuto extends LinearOpMode {
+    public static String motif;
     public RobotSystem robot;
     public AprilTagDetection lastTagDetected;
     public int iterations = 0;
+    public String sequence;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,7 +26,7 @@ public class SimpleAuto extends LinearOpMode {
         while (opModeIsActive() && iterations < 2) {
             driveToTag(lastTagDetected, 100, 100);
             //rely on odometry here - three sequences based off of motif
-            String sequence = robot.decode(lastTagDetected);
+            sequence = robot.decode(lastTagDetected);
             turn(30);
             //outtake
             turn(60);
@@ -33,6 +35,7 @@ public class SimpleAuto extends LinearOpMode {
             sequence(sequence);
             driveToTag(lastTagDetected, 300, 100);
             //outtake
+            motif = sequence;
             iterations++;
         }
     }
