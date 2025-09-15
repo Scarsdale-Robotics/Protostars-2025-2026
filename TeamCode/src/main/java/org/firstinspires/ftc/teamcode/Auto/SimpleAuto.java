@@ -52,6 +52,7 @@ public class SimpleAuto extends LinearOpMode {
                 lastTagDetected = tag;
                 //hopefully my edit wont make the robot explode
                 motifID = tag.id;
+                break;
             }
         } else {
             lastTagDetected = null; // clear old tag when none detected
