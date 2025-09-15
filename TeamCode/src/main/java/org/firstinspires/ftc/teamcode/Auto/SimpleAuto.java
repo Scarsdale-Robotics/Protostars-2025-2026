@@ -95,6 +95,7 @@ public class SimpleAuto extends LinearOpMode {
         return target != null && target.ftcPose.range <= radius;
     }
     public void sequence(String motif) {
+
         if (motif.equals("GPP")) {
             odomDrive(1000);
         }
@@ -103,6 +104,8 @@ public class SimpleAuto extends LinearOpMode {
         } else {
             odomDrive(3000);
         }
+        turn(90);
+
         for (int i = 0; i < 3; i++) {
             odomDrive(100);
             //intake
@@ -116,7 +119,7 @@ public class SimpleAuto extends LinearOpMode {
         } else {
             odomDrive(4000);
         }
-        turn(70);
+        turn(-70);
         //shoot
     }
 }
