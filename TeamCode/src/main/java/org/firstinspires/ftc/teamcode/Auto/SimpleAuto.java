@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotserver.internal.webserver.RobotControllerWebHandlers;
+import org.firstinspires.ftc.teamcode.RobotConstants;
 import org.firstinspires.ftc.teamcode.RobotSystem;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -36,6 +38,7 @@ public class SimpleAuto extends LinearOpMode {
             driveToTag(lastTagDetected, 300, 100);
             //outtake
             motif = sequence;
+
             iterations++;
         }
     }
@@ -71,13 +74,13 @@ public class SimpleAuto extends LinearOpMode {
         }
     }
     //ticks
-    public void odomDrive(double distance) {
+    public void odomDrive(double inches) {
         detectTags();
         PIDController controllerOdom = new PIDController(0.02,0,0.001);
         controllerOdom.setTolerance(1);
-        double targ = robot.drive.getLeftBackPosition() + distance;
+        int targetTicks = (int)(inches * new RobotConstants().TICKS_PER_INCH);
         while (opModeIsActive() && !controllerOdom.atSetPoint()) {
-            double power = controllerOdom.calculate(robot.drive.getLeftBackPosition(), targ);
+            double power = controllerOdom.calculate(robot.hardwareRobot.odometryWheel.getCurrentPosition(), targetTicks);
             robot.drive.driveRobotCentricPowers(0, power, 0);
         }
     }

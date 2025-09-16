@@ -14,6 +14,12 @@ public class TeleOpOutline extends LinearOpMode {
     public double speed;
     public RobotSystem robot;
     public AprilTagDetection lastTagDetected;
+    public char first;
+    public char second;
+    public char third;
+    public boolean fr;
+    public boolean sc;
+    public boolean tr;
     public String motif;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,6 +27,9 @@ public class TeleOpOutline extends LinearOpMode {
         robot.hardwareRobot.setImu();
         motif = SimpleAuto.motif;
         this.speed = 0.5;
+        first = motif.charAt(0);
+        second = motif.charAt(1);
+        third = motif.charAt(2);
         waitForStart();
         while (opModeIsActive()) {
             double strafe = gamepad1.left_stick_x;
@@ -33,6 +42,19 @@ public class TeleOpOutline extends LinearOpMode {
             }
             robot.drive.driveRobotCentricPowers(strafe * speed, forward * speed, turn * speed);
             detectTags();
+            telemetry.addData("Strafe", strafe);
+            telemetry.addData("Forward", forward);
+            telemetry.addData("Turn", turn);
+            if (!fr) {
+                telemetry.addLine("Next" + first);
+            } else {
+                if (!sc) {
+                    telemetry.addLine("Next:" + second);
+                } else {
+                    telemetry.addLine("Next:" + third);
+                }
+            }
+            telemetry.update();
         }
     }
     public void detectTags() {
