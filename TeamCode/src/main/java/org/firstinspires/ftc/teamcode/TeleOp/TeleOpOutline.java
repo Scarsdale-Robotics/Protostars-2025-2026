@@ -9,7 +9,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
-
+//TODO: implement to intake next system
 public class TeleOpOutline extends LinearOpMode {
     public double speed;
     public RobotSystem robot;

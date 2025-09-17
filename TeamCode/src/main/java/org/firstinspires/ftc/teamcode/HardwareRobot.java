@@ -24,7 +24,8 @@ public class HardwareRobot {
     public final Motor rightBack;
     public final WebcamName cameraName;
     public final IMU imu;
-    public final DcMotorEx odometryWheel;
+    public final DcMotorEx rightOdom;
+    public final DcMotorEx leftOdom;
 
     public HardwareRobot(HardwareMap hardwareMap) {
         leftFront = new Motor(hardwareMap, "leftFront", Motor.GoBILDA.RPM_312);
@@ -65,9 +66,13 @@ public class HardwareRobot {
         imu = hardwareMap.get(IMU.class, "imu");
         cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        odometryWheel = hardwareMap.get(DcMotorEx.class, "Odom");
-        odometryWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odometryWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftOdom = hardwareMap.get(DcMotorEx.class, "Odom");
+        leftOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftOdom.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        rightOdom = hardwareMap.get(DcMotorEx.class, "Odom");
+        rightOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightOdom.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
     public void setImu() {
