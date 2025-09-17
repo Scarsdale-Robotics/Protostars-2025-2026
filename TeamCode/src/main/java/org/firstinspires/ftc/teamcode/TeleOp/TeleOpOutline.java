@@ -19,6 +19,7 @@ public class TeleOpOutline extends LinearOpMode {
     public char third;
     public boolean fr;
     public boolean sc;
+    public boolean lastSquarePressed;
     public boolean tr;
     public String motif;
     @Override
@@ -55,6 +56,10 @@ public class TeleOpOutline extends LinearOpMode {
                 }
             }
             telemetry.update();
+            if (gamepad1.square && !lastSquarePressed) {
+
+            }
+            lastSquarePressed = gamepad1.square;
         }
     }
     public void detectTags() {
