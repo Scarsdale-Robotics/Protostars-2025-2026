@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.RobotSystem;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.teamcode.Auto.SimpleAuto;
+import java.util.ArrayList;
 
 public class TeleOpOutline extends LinearOpMode {
     public double speed;
@@ -21,7 +26,11 @@ public class TeleOpOutline extends LinearOpMode {
             double turn = gamepad1.right_stick_x;
             robot.drive.driveRobotCentricPowers(strafe * speed, forward * speed, turn * speed);
 
+            //if (gamepad1.b){
+
+            //}
 
         }
     }
 }
+

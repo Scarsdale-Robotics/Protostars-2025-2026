@@ -39,4 +39,17 @@ public class RobotSystem {
         }
         return "No Tag Found";
     }
+
+    public void goalAlign(AprilTagDetection target) {
+        if (target.id == 20) {// 24 if on red team
+
+            /*
+            i'll figure out how to do this later
+            but basically it takes the yaw and coords
+            and stuff and adjusts position until it
+            is perfectly in line and coordinates are
+            wherever is good for aiming
+             */
+        }
+    }
 }
