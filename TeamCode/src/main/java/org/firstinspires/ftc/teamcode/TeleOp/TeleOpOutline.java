@@ -59,6 +59,9 @@ public class TeleOpOutline extends LinearOpMode {
             if (target.ftcPose.bearing > 0){
                 aimTurn(-1 * target.ftcPose.bearing);
             }
+            if (target.ftcPose.x != 0) {
+                aimTurn(-1 * target.ftcPose.x);
+            }
         }
     }
     public void detectTags() {
