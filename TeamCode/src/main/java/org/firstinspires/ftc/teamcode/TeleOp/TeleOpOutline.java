@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import androidx.annotation.NonNull;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -53,15 +55,17 @@ public class TeleOpOutline extends LinearOpMode {
         }
     }
 
-    public void goalAlign(AprilTagDetection target) {
+    public void goalAlign(@NonNull AprilTagDetection target) {
         if (target.id == 20) {// 24 if on red team
 
-            if (target.ftcPose.bearing > 0){
+            if (target.ftcPose.bearing != 0) {
                 aimTurn(-1 * target.ftcPose.bearing);
             }
             if (target.ftcPose.x != 0) {
                 aimTurn(-1 * target.ftcPose.x);
             }
+
+
         }
     }
     public void detectTags() {
