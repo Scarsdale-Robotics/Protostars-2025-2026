@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.Auto;
-
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotserver.internal.webserver.RobotControllerWebHandlers;
 import org.firstinspires.ftc.teamcode.RobotConstants;
@@ -21,14 +19,11 @@ public class SimpleAuto extends LinearOpMode {
     public AprilTagDetection lastTagDetected;
     public int iterations = 0;
     public String sequence;
-    public Pose2d currentPose;
-    //TODO: implement 2 wheel odometry + imu and pose2d + roadrunner. Also, create hybrid system w apriltags as well.
-
+    //TODO: implement 2 wheel odometry + imu and pose2d + roadrunner. Also, create hybrid system w apriltags as well
     @Override
     public void runOpMode() throws InterruptedException {
         this.robot = new RobotSystem(hardwareMap, this);
         robot.hardwareRobot.setImu();
-        currentPose = new Pose2d(new Vector2d(0,0), robot.hardwareRobot.getHeading());
         waitForStart();
         while (opModeIsActive() && iterations < 2) {
             driveToTag(lastTagDetected, 100, 100);
@@ -43,7 +38,6 @@ public class SimpleAuto extends LinearOpMode {
             driveToTag(lastTagDetected, 300, 100);
             //outtake
             motif = sequence;
-
             iterations++;
         }
     }
@@ -85,7 +79,7 @@ public class SimpleAuto extends LinearOpMode {
         controllerOdom.setTolerance(1);
         int targetTicks = (int)(inches * new RobotConstants().TICKS_PER_INCH);
         while (opModeIsActive() && !controllerOdom.atSetPoint()) {
-            double power = controllerOdom.calculate(robot.hardwareRobot.leftOdom.getCurrentPosition(), targetTicks);
+            double power = controllerOdom.calculate(robot.hardwareRobot.pinpoint.getEncoderY(), targetTicks);
             robot.drive.driveRobotCentricPowers(0, power, 0);
         }
     }
@@ -123,8 +117,5 @@ public class SimpleAuto extends LinearOpMode {
             //intake
         }
         turn(-90);
-    }
-    public void mergedController(int degrees, int targetdistance) {
-
     }
 }

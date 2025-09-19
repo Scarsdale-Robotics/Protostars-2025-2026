@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.kinematics.DifferentialOdometry;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.arcrobotics.ftclib.kinematics.Odometry;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,8 +25,7 @@ public class HardwareRobot {
     public final Motor rightBack;
     public final WebcamName cameraName;
     public final IMU imu;
-    public final DcMotorEx rightOdom;
-    public final DcMotorEx leftOdom;
+    public final GoBildaPinpointDriver pinpoint;
 
     public HardwareRobot(HardwareMap hardwareMap) {
         leftFront = new Motor(hardwareMap, "leftFront", Motor.GoBILDA.RPM_312);
@@ -63,17 +63,12 @@ public class HardwareRobot {
         leftBack.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        imu = hardwareMap.get(IMU.class, "imu");
-        cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        imu = hardwareMap.get(IMU.class, "IMU");
+        cameraName = hardwareMap.get(WebcamName.class,  "Webcam 1");
 
-        leftOdom = hardwareMap.get(DcMotorEx.class, "Odom");
-        leftOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftOdom.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        rightOdom = hardwareMap.get(DcMotorEx.class, "Odom");
-        rightOdom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightOdom.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
     }
     public void setImu() {
         RevHubOrientationOnRobot orientationOnRobot =
@@ -87,6 +82,11 @@ public class HardwareRobot {
 
         imu.initialize(parameters);
         imu.resetYaw();
+    }
+    public void initOdom() {
+        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        pinpoint.resetPosAndIMU();
     }
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();

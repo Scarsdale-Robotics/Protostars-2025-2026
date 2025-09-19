@@ -41,7 +41,7 @@ public class TeleOpOutline extends LinearOpMode {
             } else {
                 speed = 0.5;
             }
-            robot.drive.driveRobotCentricPowers(strafe * speed, forward * speed, turn * speed);
+            robot.drive.driveFieldCentricPowers(strafe * speed, forward * speed, turn * speed, robot.hardwareRobot.getHeading());
             detectTags();
             telemetry.addData("Strafe", strafe);
             telemetry.addData("Forward", forward);
