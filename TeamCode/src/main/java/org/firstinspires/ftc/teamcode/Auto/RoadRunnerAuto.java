@@ -5,59 +5,76 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RobotSystem;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.RoadRunner.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
-
+//TODO: implement pose tracking with control hub imu instead of pinpoint imu.
 public class RoadRunnerAuto extends LinearOpMode {
     public RobotSystem robot;
     public AprilTagDetection lastTagDetected;
     public SampleMecanumDrive drive;
-    public Pose2d currentPose;
-    double xDist = 0;
-    double yDist = 0;
+    public Pose2d startPose;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        this.robot = new RobotSystem(hardwareMap, this);
-        currentPose = new Pose2d(0,0,0);
-        drive.setPoseEstimate(currentPose);
-        this.drive = new SampleMecanumDrive(hardwareMap);
-        Trajectory trajectory = drive.trajectoryBuilder(currentPose)
-                .splineTo(new Vector2d(100,100), robot.hardwareRobot.getHeading())
+        robot = new RobotSystem(hardwareMap, this);
+        drive = new SampleMecanumDrive(hardwareMap, robot);
+        robot.hardwareRobot.initOdom();
+        robot.hardwareRobot.setImu();
+        startPose = new Pose2d(0, 0, 0);
+        drive.setPoseEstimate(startPose);
+
+        Trajectory trajectory1 = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(100, 100), 0)
                 .build();
-        Trajectory trajectory2 = drive.trajectoryBuilder(currentPose)
-                .splineTo(new Vector2d(50,50), robot.hardwareRobot.getHeading())
+
+        Trajectory trajectory2 = drive.trajectoryBuilder(trajectory1.end())
+                .splineTo(new Vector2d(50, 50), 0)
                 .build();
+
         waitForStart();
-        while (opModeIsActive()) {
-            currentPose = new Pose2d(robot.hardwareRobot.pinpoint.getPosX(DistanceUnit.INCH), robot.hardwareRobot.pinpoint.getPosY(DistanceUnit.INCH), robot.hardwareRobot.getHeading());
-            drive.followTrajectory(trajectory);
+
+        if (isStopRequested()) return;
+
+        drive.followTrajectoryAsync(trajectory1);
+        while (opModeIsActive() && drive.isBusy()) {
+            drive.update();
+            detectTags();
+            telemetry.addData("pose", drive.getPoseEstimate());
+            telemetry.update();
+        }
+
+        drive.followTrajectoryAsync(trajectory2);
+        while (opModeIsActive() && drive.isBusy()) {
+            drive.update();
+            detectTags();
+            telemetry.addData("pose", drive.getPoseEstimate());
+            telemetry.update();
         }
     }
+
     public boolean xInchRadius(int radius, AprilTagDetection target) {
         return target != null && target.ftcPose.range <= radius;
     }
+
     public void detectTags() {
         ArrayList<AprilTagDetection> detections = robot.cv.aprilTagProcessor.getDetections();
         if (detections != null && !detections.isEmpty()) {
-            for (AprilTagDetection tag : detections) {
-                telemetry.addLine("AprilTag Detected.");
-                telemetry.addData("ID", tag.id);
-                telemetry.addData("X (Sideways offset)", tag.ftcPose.x);
-                telemetry.addData("Y (Forward/Back Offset)", tag.ftcPose.y);
-                telemetry.addData("Z", tag.ftcPose.z);
-                telemetry.addData("Bearing", tag.ftcPose.bearing);
-                telemetry.addData("Yaw", tag.ftcPose.yaw);
-                telemetry.addData("Range: ", tag.ftcPose.range);
-                lastTagDetected = tag;
-                break;
-            }
+            lastTagDetected = detections.get(0);
+            telemetry.addLine("AprilTag Detected.");
+            telemetry.addData("ID", lastTagDetected.id);
+            telemetry.addData("X (Sideways offset)", lastTagDetected.ftcPose.x);
+            telemetry.addData("Y (Forward/Back Offset)", lastTagDetected.ftcPose.y);
+            telemetry.addData("Z", lastTagDetected.ftcPose.z);
+            telemetry.addData("Bearing", lastTagDetected.ftcPose.bearing);
+            telemetry.addData("Yaw", lastTagDetected.ftcPose.yaw);
+            telemetry.addData("Range", lastTagDetected.ftcPose.range);
+            telemetry.update();
         } else {
             lastTagDetected = null; // clear old tag when none detected
         }
     }
 }
+

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.robot.Robot;
 
@@ -20,10 +21,12 @@ public class TeleOpOutline extends LinearOpMode {
     public boolean fr;
     public boolean sc;
     public boolean lastSquarePressed;
+    public Pose2d currentPose;
     public boolean tr;
     public String motif;
     @Override
     public void runOpMode() throws InterruptedException {
+        this.currentPose = new Pose2d(0,0,0);
         this.robot = new RobotSystem(hardwareMap, this);
         robot.hardwareRobot.setImu();
         motif = SimpleAuto.motif;

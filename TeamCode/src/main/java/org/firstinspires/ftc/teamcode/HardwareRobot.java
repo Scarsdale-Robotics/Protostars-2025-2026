@@ -71,6 +71,7 @@ public class HardwareRobot {
         pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
     }
     public void setImu() {
+        //TODO: change parameters to get right orientation on robot for synchronizing w robot
         RevHubOrientationOnRobot orientationOnRobot =
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -84,6 +85,7 @@ public class HardwareRobot {
         imu.resetYaw();
     }
     public void initOdom() {
+        //TODO: change parameters to get right orientation on robot for synchronizing w robot
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         pinpoint.resetPosAndIMU();
