@@ -8,8 +8,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.RobotSystem;
 import org.firstinspires.ftc.teamcode.Subsystems.MovementSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.LocalizationSubsystem;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.ArrayList;
+
 
 
 public class TeleOp2 extends LinearOpMode {
@@ -50,12 +52,12 @@ public class TeleOp2 extends LinearOpMode {
         PIDController controller = new PIDController(0.02, 0, 0.001);  // tune these
         controller.setTolerance(1);
 
-        double targetAngle = robot.hardwareRobot.getHeading() + degrees;
+        double targetAngle = LocalizationSubsystem.getHeading() + degrees;
 
         while (opModeIsActive() && !controller.atSetPoint()) {
-            double power = controller.calculate(robot.hardwareRobot.getHeading(), targetAngle);
+            double power = controller.calculate(LocalizationSubsystem.getHeading(), targetAngle);
             robot.drive.driveRobotCentric(0, 0, power);
-            telemetry.addData("Heading", robot.hardwareRobot.getHeading());
+            telemetry.addData("Heading", LocalizationSubsystem.getHeading());
             telemetry.addData("Power", power);
             telemetry.update();
         }
