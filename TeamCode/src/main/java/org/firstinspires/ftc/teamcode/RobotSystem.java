@@ -13,9 +13,10 @@ public class RobotSystem {
 
     public HardwareRobot hardwareRobot;
 
-    public double robotSystem(HardwareMap hardware){
+    public RobotSystem(HardwareMap hardware){
 
-        return 2;
+        hardwareRobot = new HardwareRobot(hardware);
+        drive = new MovementSubsystem(hardwareRobot.leftFront, hardwareRobot.rightFront, hardwareRobot.leftBack, hardwareRobot.rightBack);
 
     }
 

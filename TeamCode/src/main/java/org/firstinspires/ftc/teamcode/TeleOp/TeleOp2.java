@@ -21,6 +21,8 @@ public class TeleOp2 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        robot = new RobotSystem(hardwareMap);
         while (opModeIsActive()) {
             if (gamepad1.a) {
                 speed = 0.5;

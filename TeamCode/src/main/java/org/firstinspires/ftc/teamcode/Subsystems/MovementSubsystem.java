@@ -10,18 +10,31 @@ public class MovementSubsystem extends SubsystemBase {
     public Motor frontRightMotor;
     public Motor backLeftMotor;
     public Motor backRightMotor;
+
+    public MovementSubsystem(Motor frontLeftMotor,
+                             Motor frontRightMotor,
+                             Motor backLeftMotor,
+                             Motor backRightMotor)
+    {
+        this.frontLeftMotor = frontLeftMotor;
+        this.frontRightMotor = frontRightMotor;
+        this.backLeftMotor = backLeftMotor;
+        this.backRightMotor = backRightMotor;
+        this.motorControl = new MecanumDrive(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
+    }
     public MecanumDrive motorControl;
+
 
     double speed;
 
 
     public void driveRobotCentric (double forward, double strafe, double turn) {
 
-
-        frontLeftMotor.setTargetDistance(forward + strafe + (turn / 90));
-        frontRightMotor.setTargetDistance(forward - strafe + (-turn / 90));
-        backLeftMotor.setTargetDistance(forward - strafe + (turn / 90));
-        backRightMotor.setTargetDistance(forward + strafe + (-turn / 90));
+        motorControl.driveRobotCentric(strafe,forward,turn);
+        //frontLeftMotor.setTargetDistance(forward + strafe + turn);
+        //frontRightMotor.setTargetDistance(forward - strafe  - turn);
+        //backLeftMotor.setTargetDistance(forward - strafe + turn);
+        //backRightMotor.setTargetDistance(forward + strafe -turn);
 
 
     }
