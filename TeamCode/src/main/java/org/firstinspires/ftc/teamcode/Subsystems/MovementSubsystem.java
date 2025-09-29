@@ -16,7 +16,14 @@ public class MovementSubsystem extends SubsystemBase {
 
 
     public void driveRobotCentric (double forward, double strafe, double turn) {
-        //do stuff
+
+
+        frontLeftMotor.setTargetDistance(forward + strafe);
+        frontRightMotor.setTargetDistance(forward - strafe);
+        backLeftMotor.setTargetDistance(forward - strafe);
+        backRightMotor.setTargetDistance(forward + strafe);
+
+
     }
 
 
