@@ -11,6 +11,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
 //TODO: implement pose tracking with control hub imu instead of pinpoint imu.
+//TODO:
 public class RoadRunnerAuto extends LinearOpMode {
     public RobotSystem robot;
     public AprilTagDetection lastTagDetected;
@@ -37,17 +38,18 @@ public class RoadRunnerAuto extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
-
-        drive.followTrajectoryAsync(trajectory1);
+        drive.followTrajectory(trajectory1);
         while (opModeIsActive() && drive.isBusy()) {
+            robot.hardwareRobot.pinpoint.update();
             drive.update();
             detectTags();
             telemetry.addData("pose", drive.getPoseEstimate());
             telemetry.update();
         }
 
-        drive.followTrajectoryAsync(trajectory2);
+        drive.followTrajectory(trajectory2);
         while (opModeIsActive() && drive.isBusy()) {
+            robot.hardwareRobot.pinpoint.update();
             drive.update();
             detectTags();
             telemetry.addData("pose", drive.getPoseEstimate());

@@ -36,6 +36,7 @@ public class TeleOpOutline extends LinearOpMode {
         third = motif.charAt(2);
         waitForStart();
         while (opModeIsActive()) {
+            robot.hardwareRobot.pinpoint.update();
             double strafe = gamepad1.left_stick_x;
             double forward = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
