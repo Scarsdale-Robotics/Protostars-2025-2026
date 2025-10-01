@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
 public class LocalizationSubsystem {
+    static AprilTagDetection lastTagDetected;
     public static double getHeading(){
-        return 2;
-        //TODO: actually make this work.
+        return lastTagDetected.ftcPose.yaw;
     }
+
+
 
 }

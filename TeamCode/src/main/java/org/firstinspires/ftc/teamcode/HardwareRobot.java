@@ -12,13 +12,13 @@ public class HardwareRobot {
     public final Motor rightBack;
 
     public HardwareRobot(HardwareMap hardwareMap) {
-        //CREATES THE MOTORS
+        //Creates the motors
         leftFront = new Motor(hardwareMap, "leftFront", Motor.GoBILDA.RPM_312);
         rightFront = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_312);
         leftBack = new Motor(hardwareMap, "leftBack", Motor.GoBILDA.RPM_312);
         rightBack = new Motor(hardwareMap, "rightBack", Motor.GoBILDA.RPM_312);
 
-        //RESET MOTOR ENCODERS
+        //reset motor encoders
         leftFront.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

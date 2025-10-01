@@ -13,7 +13,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.ArrayList;
 
 
-
 public class TeleOp2 extends LinearOpMode {
     public double speed;
     public RobotSystem robot;
@@ -34,7 +33,7 @@ public class TeleOp2 extends LinearOpMode {
             }
 
             double strafe = gamepad1.left_stick_x;
-            double forward = gamepad1.left_stick_y;
+            double forward = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
             robot.drive.driveRobotCentric(strafe * speed, forward * speed, turn * speed);
 
@@ -48,7 +47,7 @@ public class TeleOp2 extends LinearOpMode {
         }
 
     }
-    public void aimTurn(double degrees) {
+    public void alignTurn(double degrees) {
         PIDController controller = new PIDController(0.02, 0, 0.001);  // tune these
         controller.setTolerance(1);
 
@@ -67,10 +66,10 @@ public class TeleOp2 extends LinearOpMode {
         if (target.id == 20) {// 24 if on red team
 
             if (target.ftcPose.bearing != 0) {
-                aimTurn(-1 * target.ftcPose.bearing);
+                alignTurn(-1 * target.ftcPose.bearing);
             }
             if (target.ftcPose.x != 0) {
-                aimTurn(-1 * target.ftcPose.x);
+                alignTurn(-1 * target.ftcPose.x);
             }
         }
     }

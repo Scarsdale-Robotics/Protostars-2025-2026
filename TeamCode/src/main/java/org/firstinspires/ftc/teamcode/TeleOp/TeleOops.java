@@ -6,9 +6,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.MovementSubsystem;
 
 public class TeleOops extends LinearOpMode {
 
-
-
-
     @Override
     public void runOpMode() throws InterruptedException {
 
