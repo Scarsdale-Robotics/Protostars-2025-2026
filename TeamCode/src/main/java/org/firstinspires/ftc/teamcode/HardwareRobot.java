@@ -90,10 +90,9 @@ public class HardwareRobot {
         pinpoint.setOffsets(100,100, DistanceUnit.INCH);
         pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         pinpoint.resetPosAndIMU();
-
     }
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        return orientation.getYaw(AngleUnit.RADIANS);
+        return orientation.getYaw(AngleUnit.DEGREES);
     }
 }
