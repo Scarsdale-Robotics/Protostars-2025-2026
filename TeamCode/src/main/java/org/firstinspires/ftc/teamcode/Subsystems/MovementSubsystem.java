@@ -11,6 +11,7 @@ public class MovementSubsystem extends SubsystemBase {
     public Motor backLeftMotor;
     public Motor backRightMotor;
 
+
     public MovementSubsystem(Motor frontLeftMotor,
                              Motor frontRightMotor,
                              Motor backLeftMotor,
@@ -22,7 +23,7 @@ public class MovementSubsystem extends SubsystemBase {
         this.backRightMotor = backRightMotor;
         this.motorControl = new MecanumDrive(frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor);
     }
-    public MecanumDrive motorControl;
+    public static MecanumDrive motorControl;
 
 
     double speed;

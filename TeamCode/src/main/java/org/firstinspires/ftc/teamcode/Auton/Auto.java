@@ -7,11 +7,22 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.ArrayList;
 
 public class Auto extends LinearOpMode {
+
+    public double speed;
+    public RobotSystem robot;
+    public AprilTagDetection lastTagDetected;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        while (opModeIsActive()) {
+
+        robot = new RobotSystem(hardwareMap);
+        waitForStart();
+        while (opModeIsActive()){
+            robot.drive.driveRobotCentric(0, 1, 0);
 
         }
 
     }
+
 }
+

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 public class HardwareRobot {
 
@@ -10,6 +11,8 @@ public class HardwareRobot {
     public final Motor rightFront;
     public final Motor leftBack;
     public final Motor rightBack;
+
+    public WebcamName cameraName;
 
     public HardwareRobot(HardwareMap hardwareMap) {
         //Creates the motors
