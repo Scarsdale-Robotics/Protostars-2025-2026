@@ -7,9 +7,10 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-import com.pedropathing.paths.PathConstraints;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RobotSystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -19,19 +20,22 @@ import java.util.Arrays;
 //TODO: TUNE PID, CENTRIPETAL, ALL CONSTANTS, AND EXPERIMENT WITH INTERPOLATION.
 //TODO: download ftcdashboard and tune constants with drive test
 //TODO: finish path implementation: fix preload path
+//TODO: make 4 other autos, make backup autos, and add intake steps to pathing.
+//TODO: add move to load zone for pathing
 public class PedroPathingAuto extends LinearOpMode {
     public RobotSystem robot = new RobotSystem(hardwareMap, this);
     public PathChain detectionPathChain;
     public PathChain returnPathChain;
     public PathChain pickupPathChain1;
     public PathChain pickupPathChain2;
+    public PathChain intakePathChain;
     public PathChain pickupPathChain3;
     public PathChain scorePathChain;
     public PathChain scorePreloadPathChain;
     public Follower follower;
     public Timer pathTimer, opmodeTimer;
     public int pathState;
-    public final Pose startPose = new Pose(0,0,0);
+    public final Pose startPose = new Pose(60,0,0);
     public final Pose apTag1 = new Pose(70,80, startPose.getHeading());
     //quad bezier curve, rest linear w little to no interpolation
     public Pose pickup = new Pose(40, 84, 180);
@@ -94,10 +98,25 @@ public class PedroPathingAuto extends LinearOpMode {
                 .setLinearHeadingInterpolation(robot.hardwareRobot.getHeading(), 180)
                 .build();
         this.scorePathChain = follower.pathBuilder()
-                .addPath(new BezierCurve(Arrays.asList(new Pose(40,35,0), new Pose(70,80, 0), alignGoal)))
+                .addPath(new BezierCurve(Arrays.asList(new Pose(robot.hardwareRobot.pinpoint.getPosX(DistanceUnit.INCH), robot.hardwareRobot.pinpoint.getPosY(DistanceUnit.INCH), robot.hardwareRobot.getHeading()), new Pose(70,80, 0), alignGoal)))
                 .setLinearHeadingInterpolation(robot.hardwareRobot.getHeading(), 143)
                 .build();
         this.returnPathChain = follower.pathBuilder()
+                .addPath(new BezierCurve(alignGoal, new Pose(90,20,0), new Pose(0,0,0)))
+                .setLinearHeadingInterpolation(143,0)
+                .build();
+        this.intakePathChain = follower.pathBuilder()
+                .addPath(new BezierLine(robot.hardwareRobot.getRobotPose(), new Pose(robot.hardwareRobot.getRobotPose().getX() - 4, robot.hardwareRobot.getRobotPose().getY(), robot.hardwareRobot.getHeading())))
+                .setConstantHeadingInterpolation(180)
+                //intake
+                .addPath(new BezierLine(robot.hardwareRobot.getRobotPose(), new Pose(robot.hardwareRobot.getRobotPose().getX() - 4, robot.hardwareRobot.getRobotPose().getY(), robot.hardwareRobot.getHeading())))
+                .setConstantHeadingInterpolation(180)
+                //intake
+                .addPath(new BezierLine(robot.hardwareRobot.getRobotPose(), new Pose(robot.hardwareRobot.getRobotPose().getX() - 4, robot.hardwareRobot.getRobotPose().getY(), robot.hardwareRobot.getHeading())))
+                .setConstantHeadingInterpolation(180)
+                //intake
+                .addPath(new BezierLine(robot.hardwareRobot.getRobotPose(), pickup))
+                .setConstantHeadingInterpolation(180)
                 .build();
     }
     public void detectTags() {
@@ -149,6 +168,8 @@ public class PedroPathingAuto extends LinearOpMode {
                     if (robot.decode(lastTagDetected).equals("PPG")) follower.followPath(pickupPathChain3);
                     else if (robot.decode(lastTagDetected).equals("PGP")) follower.followPath(pickupPathChain2);
                     else follower.followPath(pickupPathChain1);
+                    //drive, intake, drive,intake,drive,intake, drive back
+
                     setPathState(2);
                 }
                 break;
@@ -156,6 +177,9 @@ public class PedroPathingAuto extends LinearOpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(!follower.isBusy()) {
                     follower.followPath(scorePathChain);
+                }
+                if (!follower.isBusy()) {
+                    follower.followPath(returnPathChain);
                     setPathState(3);
                 }
                 break;
