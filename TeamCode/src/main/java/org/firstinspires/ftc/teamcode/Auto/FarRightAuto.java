@@ -22,7 +22,7 @@ import java.util.Arrays;
 //TODO: finish path implementation: fix preload path
 //TODO: make 4 other autos, make backup autos, and add intake steps to pathing.
 //TODO: add move to load zone for pathing
-public class PedroPathingAuto extends LinearOpMode {
+public class FarRightAuto extends LinearOpMode {
     public RobotSystem robot = new RobotSystem(hardwareMap, this);
     public PathChain detectionPathChain;
     public PathChain returnPathChain;
@@ -35,16 +35,13 @@ public class PedroPathingAuto extends LinearOpMode {
     public Follower follower;
     public Timer pathTimer, opmodeTimer;
     public int pathState;
-    public final Pose startPose = new Pose(60,0,0);
+    public final Pose startPose = new Pose(60,10,90);
     public final Pose apTag1 = new Pose(70,80, startPose.getHeading());
     //quad bezier curve, rest linear w little to no interpolation
     public Pose pickup = new Pose(40, 84, 180);
-    public Pose step1 = new Pose(-20, 30, 90);
-    public Pose step1a = new Pose(-19, 30,90);
-    public Pose step1b = new Pose(-18, 30, 90);
-    public Pose step1c = new Pose(-17, 30, 90);
     // quadratic bezier curve for this step
     public Pose alignGoal = new Pose(30, 125, 143);
+    public PathChain finishIntake;
     public PathChain scorePreloadPathChainPtTwo;
     public Pose alignGoal2 = new Pose(30, 120, 143);
     public AprilTagDetection lastTagDetected;
@@ -82,9 +79,8 @@ public class PedroPathingAuto extends LinearOpMode {
                 .build();
         this.detectionPathChain = follower.pathBuilder()
                 .addPath(new BezierCurve(Arrays.asList(startPose, new Pose(50,10,robot.hardwareRobot.getHeading()), apTag1)))
-                .setLinearHeadingInterpolation(0,90)
+                .setConstantHeadingInterpolation(90)
                 .build();
-        //how to use curve?
         this.pickupPathChain1 = follower.pathBuilder()
                 .addPath(new BezierCurve(Arrays.asList(apTag1, new Pose(70,100,90), pickup)))
                 .setLinearHeadingInterpolation(robot.hardwareRobot.getHeading(), 180)
@@ -102,20 +98,15 @@ public class PedroPathingAuto extends LinearOpMode {
                 .setLinearHeadingInterpolation(robot.hardwareRobot.getHeading(), 143)
                 .build();
         this.returnPathChain = follower.pathBuilder()
-                .addPath(new BezierCurve(alignGoal, new Pose(90,20,0), new Pose(0,0,0)))
+                .addPath(new BezierCurve(alignGoal, new Pose(90,20,0), new Pose(10,10,0)))
                 .setLinearHeadingInterpolation(143,0)
                 .build();
         this.intakePathChain = follower.pathBuilder()
-                .addPath(new BezierLine(robot.hardwareRobot.getRobotPose(), new Pose(robot.hardwareRobot.getRobotPose().getX() - 4, robot.hardwareRobot.getRobotPose().getY(), robot.hardwareRobot.getHeading())))
+                .addPath(new BezierLine(follower.getPose(), new Pose(follower.getPose().getX() - 4, follower.getPose().getY(), follower.getHeading())))
                 .setConstantHeadingInterpolation(180)
-                //intake
-                .addPath(new BezierLine(robot.hardwareRobot.getRobotPose(), new Pose(robot.hardwareRobot.getRobotPose().getX() - 4, robot.hardwareRobot.getRobotPose().getY(), robot.hardwareRobot.getHeading())))
-                .setConstantHeadingInterpolation(180)
-                //intake
-                .addPath(new BezierLine(robot.hardwareRobot.getRobotPose(), new Pose(robot.hardwareRobot.getRobotPose().getX() - 4, robot.hardwareRobot.getRobotPose().getY(), robot.hardwareRobot.getHeading())))
-                .setConstantHeadingInterpolation(180)
-                //intake
-                .addPath(new BezierLine(robot.hardwareRobot.getRobotPose(), pickup))
+                .build();
+        this.finishIntake = follower.pathBuilder()
+                .addPath(new BezierLine(follower.getPose(), new Pose(follower.getPose().getX() + 12, follower.getPose().getY(), follower.getHeading())))
                 .setConstantHeadingInterpolation(180)
                 .build();
     }
@@ -168,13 +159,16 @@ public class PedroPathingAuto extends LinearOpMode {
                     if (robot.decode(lastTagDetected).equals("PPG")) follower.followPath(pickupPathChain3);
                     else if (robot.decode(lastTagDetected).equals("PGP")) follower.followPath(pickupPathChain2);
                     else follower.followPath(pickupPathChain1);
-                    //drive, intake, drive,intake,drive,intake, drive back
-
+                    //intake
+                    follower.followPath(intakePathChain);
+                    //intake
+                    follower.followPath(intakePathChain);
+                    //intake
+                    follower.followPath(finishIntake);
                     setPathState(2);
                 }
                 break;
             case 2:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(!follower.isBusy()) {
                     follower.followPath(scorePathChain);
                 }
@@ -184,21 +178,17 @@ public class PedroPathingAuto extends LinearOpMode {
                 }
                 break;
             case 3:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
-                    /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                     setPathState(-2);
                 }
                 break;
         }
     }
-    /** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
     public void setPathState(int pState) {
         pathState = pState;
         pathTimer.resetTimer();
     }
     private Pose getRobotPoseFromCamera(AprilTagDetection tag) {
-
         return new Pose(tag.robotPose.getPosition().x, tag.robotPose.getPosition().y, robot.hardwareRobot.getHeading(), FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
     }
 }

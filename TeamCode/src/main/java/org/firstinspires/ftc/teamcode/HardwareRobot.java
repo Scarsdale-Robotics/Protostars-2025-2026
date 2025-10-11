@@ -96,7 +96,4 @@ public class HardwareRobot {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }
-    public Pose getRobotPose() {
-        return new Pose(pinpoint.getPosX(DistanceUnit.INCH), pinpoint.getPosY(DistanceUnit.INCH), getHeading());
-    }
 }
